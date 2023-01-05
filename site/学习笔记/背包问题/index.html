@@ -684,12 +684,12 @@
 <h1 id="1-01">1. 01背包</h1>
 <h2 id="1">例1 <a href="https://www.luogu.com.cn/problem/P1048">采药</a></h2>
 <p><a href="/题面\p1048.md">题面</a></p>
-<p>首先，01背包通解就是设  $ dp[i][j] $  为当前放置$i$个物品剩下$j$重量的最大价值，$i$为放入前$i$个物品（不一定全选）,$j$为剩余空间。</p>
-<p>设$w[i]$为重量，$v[i]$为价值</p>
-<p>则转移表达式为$dp[i][j]=max{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v<a href="w[i]\le j">i</a>}}$</p>
+<p>首先，01背包通解就是设  $ dp[i][j] $  为当前放置<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个物品剩下<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>重量的最大价值，<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>为放入前<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个物品（不一定全选）,<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>为剩余空间。</p>
+<p>设<span class="arithmatex"><span class="MathJax_Preview">w[i]</span><script type="math/tex">w[i]</script></span>为重量，<span class="arithmatex"><span class="MathJax_Preview">v[i]</span><script type="math/tex">v[i]</script></span>为价值</p>
+<p>则转移表达式为<span class="arithmatex"><span class="MathJax_Preview">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v[i](w[i]\le j)}\}</span><script type="math/tex">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v[i](w[i]\le j)}\}</script></span></p>
 <p><code>注：此方程并非最简</code></p>
-<p>$j-w[i]$就是放入此物品的容量，而我们需要$剩下j$的容量，所以需要到上一步去借，所以是$dp[i-1][j-w[i]]$</p>
-<p>那么 $w[i]\le j$ 就是它能够借到（现在都剩下$j$了，那如果不借那么$dp[i-1]$的 $j &lt; 0$ 了）</p>
+<p><span class="arithmatex"><span class="MathJax_Preview">j-w[i]</span><script type="math/tex">j-w[i]</script></span>就是放入此物品的容量，而我们需要<span class="arithmatex"><span class="MathJax_Preview">剩下j</span><script type="math/tex">剩下j</script></span>的容量，所以需要到上一步去借，所以是<span class="arithmatex"><span class="MathJax_Preview">dp[i-1][j-w[i]]</span><script type="math/tex">dp[i-1][j-w[i]]</script></span></p>
+<p>那么 <span class="arithmatex"><span class="MathJax_Preview">w[i]\le j</span><script type="math/tex">w[i]\le j</script></span> 就是它能够借到（现在都剩下<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>了，那如果不借那么<span class="arithmatex"><span class="MathJax_Preview">dp[i-1]</span><script type="math/tex">dp[i-1]</script></span>的 <span class="arithmatex"><span class="MathJax_Preview">j &lt; 0</span><script type="math/tex">j < 0</script></span> 了）</p>
 <p>核心代码：</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a><span class="k">for</span><span class="p">(</span><span class="n">LL</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span><span class="c1">//第一步dp要获取i=0的情况,注意要开到下标1开始</span>
 <a id="__codelineno-0-2" name="__codelineno-0-2" href="#__codelineno-0-2"></a><span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="n">LL</span><span class="w"> </span><span class="n">j</span><span class="o">=</span><span class="n">t</span><span class="p">;</span><span class="n">j</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">;</span><span class="n">j</span><span class="o">--</span><span class="p">){</span><span class="c1">//注意--</span>
@@ -699,11 +699,11 @@
 <a id="__codelineno-0-6" name="__codelineno-0-6" href="#__codelineno-0-6"></a><span class="w">    </span><span class="p">}</span>
 <a id="__codelineno-0-7" name="__codelineno-0-7" href="#__codelineno-0-7"></a><span class="p">}</span>
 </code></pre></div>
-<p>这个方程也可从$0$开始遍历（后面要讲化简，建议从$t$开始）</p>
+<p>这个方程也可从<span class="arithmatex"><span class="MathJax_Preview">0</span><script type="math/tex">0</script></span>开始遍历（后面要讲化简，建议从<span class="arithmatex"><span class="MathJax_Preview">t</span><script type="math/tex">t</script></span>开始）</p>
 <p><a href="../%E4%BB%A3%E7%A0%81/md/p1048/">完整代码</a></p>
 <h2 id="2">例2  <a href="https://www.luogu.com.cn/problem/P1060">开心的金明</a></h2>
 <p><a href="../%E9%A2%98%E9%9D%A2/p1060/">题面</a></p>
-<p>首先，我们改一下定义，设第$i$件的商品价格为$v[i]$重要度为$p[i]$，求买了总共不超过$n$元的商品的$v[i]*p[i]$之和</p>
+<p>首先，我们改一下定义，设第<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>件的商品价格为<span class="arithmatex"><span class="MathJax_Preview">v[i]</span><script type="math/tex">v[i]</script></span>重要度为<span class="arithmatex"><span class="MathJax_Preview">p[i]</span><script type="math/tex">p[i]</script></span>，求买了总共不超过<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>元的商品的<span class="arithmatex"><span class="MathJax_Preview">v[i]*p[i]</span><script type="math/tex">v[i]*p[i]</script></span>之和</p>
 <p>稍微有点绕</p>
 <p>那么我们分个类</p>
 <table>
@@ -715,24 +715,24 @@
 </thead>
 <tbody>
 <tr>
-<td align="center">$v[i]$</td>
-<td align="center">$v[i]*p[i]$</td>
+<td align="center"><span class="arithmatex"><span class="MathJax_Preview">v[i]</span><script type="math/tex">v[i]</script></span></td>
+<td align="center"><span class="arithmatex"><span class="MathJax_Preview">v[i]*p[i]</span><script type="math/tex">v[i]*p[i]</script></span></td>
 </tr>
 </tbody>
 </table>
 <p>酱紫就可以套入01背包公式了</p>
-<p>那么转移表达式就是$dp[i][j]=max{_{dp[i-1][j]}^{dp[i-1][j-v[i]]+v[i]*p<a href="v[i]\le j">i</a>}}$</p>
+<p>那么转移表达式就是<span class="arithmatex"><span class="MathJax_Preview">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-v[i]]+v[i]*p[i](v[i]\le j)}\}</span><script type="math/tex">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-v[i]]+v[i]*p[i](v[i]\le j)}\}</script></span></p>
 <p><a href="../%E4%BB%A3%E7%A0%81/md/p1060/">示例代码</a></p>
 <p>虽然这可以过，但不够优雅</p>
 <blockquote>
 <p>这两道题数据范围都较小，但较大的数据会MLE/TLE，所以我们来将它化简</p>
-<p>$dp[i][j]=max{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v<a href="w[i]\le j">i</a>}}$</p>
-<p>其中$w[i]$为重量，$v[i]$为价值</p>
-<p>$ dp[i][j] $  为当前放置$i$个物品剩下$j$重量的最大价值，</p>
-<p>$i$为放入前$i$个物品（不一定全选）,$j$为剩余空间。</p>
-<p>由于对$dp[i]$有影响的只有$dp[i-1]$，根据滚动数组的思想，于是我们可以将$i$扔掉</p>
-<p>设$dp[j]$为最大价值，则转移方程为</p>
-<p>$dp[j]=max{dp[j-w[i]]+v[i],dp[j]}$</p>
+<p><span class="arithmatex"><span class="MathJax_Preview">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v[i](w[i]\le j)}\}</span><script type="math/tex">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v[i](w[i]\le j)}\}</script></span></p>
+<p>其中<span class="arithmatex"><span class="MathJax_Preview">w[i]</span><script type="math/tex">w[i]</script></span>为重量，<span class="arithmatex"><span class="MathJax_Preview">v[i]</span><script type="math/tex">v[i]</script></span>为价值</p>
+<p>$ dp[i][j] $  为当前放置<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个物品剩下<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>重量的最大价值，</p>
+<p><span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>为放入前<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个物品（不一定全选）,<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>为剩余空间。</p>
+<p>由于对<span class="arithmatex"><span class="MathJax_Preview">dp[i]</span><script type="math/tex">dp[i]</script></span>有影响的只有<span class="arithmatex"><span class="MathJax_Preview">dp[i-1]</span><script type="math/tex">dp[i-1]</script></span>，根据滚动数组的思想，于是我们可以将<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>扔掉</p>
+<p>设<span class="arithmatex"><span class="MathJax_Preview">dp[j]</span><script type="math/tex">dp[j]</script></span>为最大价值，则转移方程为</p>
+<p><span class="arithmatex"><span class="MathJax_Preview">dp[j]=max\{dp[j-w[i]]+v[i],dp[j]\}</span><script type="math/tex">dp[j]=max\{dp[j-w[i]]+v[i],dp[j]\}</script></span></p>
 </blockquote>
 <p>核心代码：</p>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-1-1" name="__codelineno-1-1" href="#__codelineno-1-1"></a><span class="w">    </span><span class="k">for</span><span class="p">(</span><span class="n">LL</span><span class="w"> </span><span class="n">i</span><span class="o">=</span><span class="mi">1</span><span class="p">;</span><span class="n">i</span><span class="o">&lt;=</span><span class="n">m</span><span class="p">;</span><span class="n">i</span><span class="o">++</span><span class="p">){</span>
@@ -744,23 +744,23 @@
 </code></pre></div>
 <p><a href="../%E4%BB%A3%E7%A0%81/md/p1060plus/">完整代码</a></p>
 <h2 id="_1">总结</h2>
-<p>01背包的方法很简单，基本上就是找$重量$与$价值$，然后套公式，可以根据例2理解这一点</p>
-<p>牢记公式：$dp[j]=max{dp[j-w[i]]+v[i],dp[j]}$</p>
+<p>01背包的方法很简单，基本上就是找<span class="arithmatex"><span class="MathJax_Preview">重量</span><script type="math/tex">重量</script></span>与<span class="arithmatex"><span class="MathJax_Preview">价值</span><script type="math/tex">价值</script></span>，然后套公式，可以根据例2理解这一点</p>
+<p>牢记公式：<span class="arithmatex"><span class="MathJax_Preview">dp[j]=max\{dp[j-w[i]]+v[i],dp[j]\}</span><script type="math/tex">dp[j]=max\{dp[j-w[i]]+v[i],dp[j]\}</script></span></p>
 <h2 id="_2">练习</h2>
 <ul>
 <li><a href="https://www.luogu.com.cn/problem/P2871">P2871 [USACO07DEC]Charm Bracelet S - 洛谷</a>  <a href="../%E9%A2%98%E9%9D%A2/p2871/">题面</a>  </li>
 <li><a href="https://www.luogu.com.cn/problem/P2170">P2170 选学霸 - 洛谷</a> <a href="../%E9%A2%98%E9%9D%A2/p2170/">题面</a> <code>注：此题需用到并查集相关知识</code></li>
 </ul>
 <h3 id="charm-bracelet-s">Charm Bracelet S</h3>
-<p>物品$n$，容量$m$，重量$w[i]$，价值$d[i]$</p>
+<p>物品<span class="arithmatex"><span class="MathJax_Preview">n</span><script type="math/tex">n</script></span>，容量<span class="arithmatex"><span class="MathJax_Preview">m</span><script type="math/tex">m</script></span>，重量<span class="arithmatex"><span class="MathJax_Preview">w[i]</span><script type="math/tex">w[i]</script></span>，价值<span class="arithmatex"><span class="MathJax_Preview">d[i]</span><script type="math/tex">d[i]</script></span></p>
 <p>一道经典01背包，直接套公式</p>
-<p>$dp[j]=max{dp[j-w[i]]+d[i],dp[j]}$</p>
+<p><span class="arithmatex"><span class="MathJax_Preview">dp[j]=max\{dp[j-w[i]]+d[i],dp[j]\}</span><script type="math/tex">dp[j]=max\{dp[j-w[i]]+d[i],dp[j]\}</script></span></p>
 <p>然后优雅的打上<code>return 0;</code></p>
 <p><a href="../%E4%BB%A3%E7%A0%81/md/p2871/">示例代码</a></p>
 <h3 id="_3">选学霸</h3>
 <p>首先我们用并查集将实力相当的学霸们合并起来，</p>
 <p>价值就是相同实力的学霸的个数，</p>
-<p>重量可以改一下定义，前$j$个学霸集合</p>
+<p>重量可以改一下定义，前<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>个学霸集合</p>
 <h1 id="2_1">2. 完全背包</h1>
 <h2 id="1_1">例1</h2>
 
@@ -804,6 +804,8 @@
     
     
       <script src="../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
       
     
   </body>
