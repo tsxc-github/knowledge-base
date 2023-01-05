@@ -10,3 +10,7 @@
 
 致谢文档：
 [快来美化你的MKDocs吧](https://juejin.cn/post/7066641709198737416)
+
+[基于mkdocs-material搭建个人静态博客(含支持的markdown语法)](https://cyent.github.io/markdown-with-mkdocs-material/syntax/math_main/)
+
+[How to create and manage an MkDocs website (like this one)](https://abpcomputing.web.cern.ch/guides/mkdocs_site/#adding-support-for-latex)
