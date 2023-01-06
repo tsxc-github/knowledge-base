@@ -21,7 +21,7 @@ public:
         return y;  
     }  
       
-    double Distance(const Point &p)  //¶¨Òå¿½±´¹¹Ôìº¯Êı  
+    double Distance(const Point &p)  //å®šä¹‰æ‹·è´æ„é€ å‡½æ•°  
     {  
         x -= p.x;  
         y -= p.y;  
