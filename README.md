@@ -6,9 +6,14 @@
 
 通过运行`cpp_to_md.py`脚本将cpp示例代码转换为代码高亮的md文件
 
-通过运行`build.bat`一键完成转换、生成静态页面、提交。
+通过运行`build.bat`一键完成cpp to md转换、生成静态页面、提交。
+
+[自用服务器(推荐)](http://4-6.tpddns.cn:6000/)
+
+[github.io](https://tsxc-github.github.io/knowledge-base/)
 
 致谢文档：
+
 [快来美化你的MKDocs吧](https://juejin.cn/post/7066641709198737416)
 
 [基于mkdocs-material搭建个人静态博客(含支持的markdown语法)](https://cyent.github.io/markdown-with-mkdocs-material/syntax/math_main/)
