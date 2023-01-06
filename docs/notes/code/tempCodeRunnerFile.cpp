@@ -1,0 +1,1 @@
+    printf("%.10Lf\n",(LD)left);
