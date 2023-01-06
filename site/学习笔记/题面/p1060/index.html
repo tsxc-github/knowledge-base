@@ -699,15 +699,15 @@
 
 <h1 id="noip2006">[NOIP2006 普及组] 开心的金明</h1>
 <h2 id="_1">题目描述</h2>
-<p>金明今天很开心，家里购置的新房就要领钥匙了，新房里有一间他自己专用的很宽敞的房间。更让他高兴的是，妈妈昨天对他说：“你的房间需要购买哪些物品，怎么布置，你说了算，只要不超过$N$元钱就行”。今天一早金明就开始做预算，但是他想买的东西太多了，肯定会超过妈妈限定的$N$元。于是，他把每件物品规定了一个重要度，分为$5$等：用整数$1-5$表示，第$5$等最重要。他还从因特网上查到了每件物品的价格（都是整数元）。他希望在不超过$N$元（可以等于$N$元）的前提下，使每件物品的价格与重要度的乘积的总和最大。</p>
-<p>设第$j$件物品的价格为$v[j]$，重要度为$w[j]$，共选中了$k$件物品，编号依次为$j_1,j_2,…,j_k$，则所求的总和为：</p>
-<p>$v[j_1] \times w[j_1]+v[j_2] \times w[j_2]+ …+v[j_k] \times w[j_k]$。</p>
+<p>金明今天很开心，家里购置的新房就要领钥匙了，新房里有一间他自己专用的很宽敞的房间。更让他高兴的是，妈妈昨天对他说：“你的房间需要购买哪些物品，怎么布置，你说了算，只要不超过<span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>元钱就行”。今天一早金明就开始做预算，但是他想买的东西太多了，肯定会超过妈妈限定的<span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>元。于是，他把每件物品规定了一个重要度，分为<span class="arithmatex"><span class="MathJax_Preview">5</span><script type="math/tex">5</script></span>等：用整数<span class="arithmatex"><span class="MathJax_Preview">1-5</span><script type="math/tex">1-5</script></span>表示，第<span class="arithmatex"><span class="MathJax_Preview">5</span><script type="math/tex">5</script></span>等最重要。他还从因特网上查到了每件物品的价格（都是整数元）。他希望在不超过<span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>元（可以等于<span class="arithmatex"><span class="MathJax_Preview">N</span><script type="math/tex">N</script></span>元）的前提下，使每件物品的价格与重要度的乘积的总和最大。</p>
+<p>设第<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>件物品的价格为<span class="arithmatex"><span class="MathJax_Preview">v[j]</span><script type="math/tex">v[j]</script></span>，重要度为<span class="arithmatex"><span class="MathJax_Preview">w[j]</span><script type="math/tex">w[j]</script></span>，共选中了<span class="arithmatex"><span class="MathJax_Preview">k</span><script type="math/tex">k</script></span>件物品，编号依次为<span class="arithmatex"><span class="MathJax_Preview">j_1,j_2,…,j_k</span><script type="math/tex">j_1,j_2,…,j_k</script></span>，则所求的总和为：</p>
+<p><span class="arithmatex"><span class="MathJax_Preview">v[j_1] \times w[j_1]+v[j_2] \times w[j_2]+ …+v[j_k] \times w[j_k]</span><script type="math/tex">v[j_1] \times w[j_1]+v[j_2] \times w[j_2]+ …+v[j_k] \times w[j_k]</script></span>。</p>
 <p>请你帮助金明设计一个满足要求的购物单。</p>
 <h2 id="_2">输入格式</h2>
-<p>第一行，为$2$个正整数，用一个空格隔开：$n,m$（其中$N(&lt;30000)$表示总钱数，$m(&lt;25)$为希望购买物品的个数。）</p>
-<p>从第$2$行到第$m+1$行，第$j$行给出了编号为$j-1$的物品的基本数据，每行有$2$个非负整数$ v p$（其中$v$表示该物品的价格$(v \le 10000)$，$p$表示该物品的重要度($1-5$)</p>
+<p>第一行，为<span class="arithmatex"><span class="MathJax_Preview">2</span><script type="math/tex">2</script></span>个正整数，用一个空格隔开：<span class="arithmatex"><span class="MathJax_Preview">n,m</span><script type="math/tex">n,m</script></span>（其中<span class="arithmatex"><span class="MathJax_Preview">N(&lt;30000)</span><script type="math/tex">N(<30000)</script></span>表示总钱数，<span class="arithmatex"><span class="MathJax_Preview">m(&lt;25)</span><script type="math/tex">m(<25)</script></span>为希望购买物品的个数。）</p>
+<p>从第<span class="arithmatex"><span class="MathJax_Preview">2</span><script type="math/tex">2</script></span>行到第<span class="arithmatex"><span class="MathJax_Preview">m+1</span><script type="math/tex">m+1</script></span>行，第<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>行给出了编号为<span class="arithmatex"><span class="MathJax_Preview">j-1</span><script type="math/tex">j-1</script></span>的物品的基本数据，每行有<span class="arithmatex"><span class="MathJax_Preview">2</span><script type="math/tex">2</script></span>个非负整数$ v p<span class="arithmatex"><span class="MathJax_Preview">（其中</span><script type="math/tex">（其中</script></span>v<span class="arithmatex"><span class="MathJax_Preview">表示该物品的价格</span><script type="math/tex">表示该物品的价格</script></span>(v \le 10000)<span class="arithmatex"><span class="MathJax_Preview">，</span><script type="math/tex">，</script></span>p<span class="arithmatex"><span class="MathJax_Preview">表示该物品的重要度(</span><script type="math/tex">表示该物品的重要度(</script></span>1-5$)</p>
 <h2 id="_3">输出格式</h2>
-<p>$1$个正整数，为不超过总钱数的物品的价格与重要度乘积的总和的最大值$(&lt;100000000)$。</p>
+<p><span class="arithmatex"><span class="MathJax_Preview">1</span><script type="math/tex">1</script></span>个正整数，为不超过总钱数的物品的价格与重要度乘积的总和的最大值<span class="arithmatex"><span class="MathJax_Preview">(&lt;100000000)</span><script type="math/tex">(<100000000)</script></span>。</p>
 <h2 id="1">样例 #1</h2>
 <h3 id="1_1">样例输入 #1</h3>
 <div class="highlight"><pre><span></span><code><a id="__codelineno-0-1" name="__codelineno-0-1" href="#__codelineno-0-1"></a>1000 5
@@ -722,7 +722,7 @@
 </code></pre></div>
 <h2 id="_4">提示</h2>
 <p><strong>【题目来源】</strong></p>
-<p>[P1060 [NOIP2006 普及组] 开心的金明 - 洛谷 | 计算机科学教育新生态 (luogu.com.cn)](https://www.luogu.com.cn/problem/P1060)</p>
+<p>[P1060 [NOIP2006 普及组] 开心的金明 - 洛谷 | 计算机科学教育新生态 <span class="arithmatex"><span class="MathJax_Preview">luogu.com.cn</span><script type="math/tex">luogu.com.cn</script></span>](https://www.luogu.com.cn/problem/P1060)</p>
 <p>NOIP 2006 普及组 第二题</p>
 
 
@@ -765,6 +765,8 @@
     
     
       <script src="../../../assets/javascripts/bundle.5cf534bf.min.js"></script>
+      
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.0/MathJax.js?config=TeX-MML-AM_CHTML"></script>
       
     
   </body>
