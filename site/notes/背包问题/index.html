@@ -6810,7 +6810,7 @@
 
 <h1 id="1-01">1. 01背包</h1>
 <h2 id="1">例1 <a href="https://www.luogu.com.cn/problem/P1048">采药</a></h2>
-<p><a href="/subject/p1048.md">题面</a></p>
+<p><a href="../subject/p1048/">题面</a></p>
 <p>首先，01背包通解就是设  $ dp[i][j] $  为当前放置<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个物品剩下<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>重量的最大价值，<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>为放入前<span class="arithmatex"><span class="MathJax_Preview">i</span><script type="math/tex">i</script></span>个物品（不一定全选）,<span class="arithmatex"><span class="MathJax_Preview">j</span><script type="math/tex">j</script></span>为剩余空间。</p>
 <p>设<span class="arithmatex"><span class="MathJax_Preview">w[i]</span><script type="math/tex">w[i]</script></span>为重量，<span class="arithmatex"><span class="MathJax_Preview">v[i]</span><script type="math/tex">v[i]</script></span>为价值</p>
 <p>则转移表达式为<span class="arithmatex"><span class="MathJax_Preview">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v[i](w[i]\le j)}\}</span><script type="math/tex">dp[i][j]=max\{_{dp[i-1][j]}^{dp[i-1][j-w[i]]+v[i](w[i]\le j)}\}</script></span></p>
