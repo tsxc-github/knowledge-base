@@ -37,5 +37,11 @@ for path,dir_list,file_list in files:
             print(path+'/'+file)
             cpp=open(path+'/'+file,'r',encoding="UTF-8")
             md.write("```cpp\n"+cpp.read()+"\n```")
+log.close()
+log=open("./cpp_to_md_log.txt",'r',encoding="utf-8")
+if log.read()=="":
+    log.close()
+    log=open("./cpp_to_md_log.txt",'w',encoding="utf-8")
+    log.write("run success")
 print("cpp to md success")
 exit(0)
