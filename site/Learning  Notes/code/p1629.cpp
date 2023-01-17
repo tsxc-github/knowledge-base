@@ -13,7 +13,13 @@ node* f;
 void dij(node* z,LL* dp[]){
     priority_queue<pair<LL,LL>,vector<pair<LL,LL>>,greater<pair<LL,LL>>> q;
     q.push({0,1});
-    
+    while(!q.empty()){
+        LL p=q.top().second;
+        q.pop();
+        for(LL i=0;i<z[p].v.size();i++){
+            
+        }
+    }
 }
 int main(){
     ios::sync_with_stdio(false);
