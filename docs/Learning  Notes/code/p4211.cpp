@@ -7,7 +7,7 @@ const LL MAX_2=20;
 struct node{
     vector<LL>v;
 };
-LL n,m,root;
+LL n,m;
 node *a;
 LL f[MAX][MAX_2+1];
 LL depth[MAX];
@@ -50,22 +50,25 @@ LL lca(LL x,LL y){
     return f[x][0];
 }
 int main(){
-    cin>>n>>m>>root;
+    cin>>n>>m;
     a=new node [n+1];
     for(LL i=1;i<n;i++){
-        LL  x,y;
-        cin>>x>>y;
-        a[x].v.push_back(y);
-        a[y].v.push_back(x);
+        LL x;
+        cin>>x;
+        a[x].v.push_back(i);
     }
-    findDepth(root,1);
+    findDepth(0,1);
     // for(LL i=1;i<=n;i++){
     //     printf("%lld ",f[i][0]);
     // }
     dfs();
     for(LL i=0;i<m;i++){
-        LL x,y;
-        cin>>x>>y;
-        printf("%lld\n",lca(x,y));
+        LL x,y,z;
+        cin>>x>>y>>z;
+        LL ans=0;
+        for(LL i=x;i<=y;i++){
+            ans+=depth[lca(i,z)];
+        }
+        printf("%lld\n",ans%201314);
     }
 }
