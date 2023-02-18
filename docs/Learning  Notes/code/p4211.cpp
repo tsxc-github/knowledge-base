@@ -6,69 +6,34 @@ const LL MAX=500005;
 const LL MAX_2=20;
 struct node{
     vector<LL>v;
+    LL father;
 };
-LL n,m;
 node *a;
-LL f[MAX][MAX_2+1];
-LL depth[MAX];
-void dfs(){
-    for(LL i=1;i<=MAX_2;i++)
-        for(LL j=1;j<=n;j++){
-            f[j][i]=f[f[j][i-1]][i-1];
-        }
-}
-void findDepth(LL num,LL now){
-    if(depth[num]!=0)
-        return;
-    depth[num]=now;
+LL *dep;
+LL *E;
+LL *pos;
+LL n,m;
+LL tot=1;
+void dfs(LL num,LL now){
+    pos[num]=min(pos[num],tot);
+    E[tot]=num;
+    dep[tot++]=now;
     for(LL i=0;i<a[num].v.size();i++){
-        if(depth[a[num].v[i]]!=0)
-            continue;
-        f[a[num].v[i]][0]=num;
-        findDepth(a[num].v[i],now+1);
+        
     }
-}
-LL lca(LL x,LL y){
-    if(x==0||y==0)
-        return 0;
-    if(depth[x]<depth[y])swap(x,y);
-    if(depth[x]!=depth[y]){
-        for(LL i=MAX_2;i>=0;i--)
-            if((depth[x]-(1<<i))>=depth[y])
-                x=f[x][i];
-    }
-    if(x==y)
-        return x;
-    for(LL i=MAX_2;i>=0;i--){
-        if(f[x][i]==0||f[y][i]==0)
-            continue;
-        if(f[x][i]!=f[y][i]){
-            x=f[x][i];
-            y=f[y][i];
-        }
-    }
-    return f[x][0];
 }
 int main(){
     cin>>n>>m;
-    a=new node [n+1];
+    a=new node [n];
+    dep=new LL [n];
+    E=new LL [2<<n-1];
+    pos=new LL [n];
+    memset(dep,0,sizeof(LL)*n);
+    memset(E,0,sizeof(LL)*(2<<n-1));
+    memset(pos,0x7f,sizeof(LL)*n);
     for(LL i=1;i<n;i++){
-        LL x;
-        cin>>x;
-        a[x].v.push_back(i);
+        cin>>a[i].father;
+        a[a[i].father].v.push_back(i);
     }
-    findDepth(0,1);
-    // for(LL i=1;i<=n;i++){
-    //     printf("%lld ",f[i][0]);
-    // }
-    dfs();
-    for(LL i=0;i<m;i++){
-        LL x,y,z;
-        cin>>x>>y>>z;
-        LL ans=0;
-        for(LL i=x;i<=y;i++){
-            ans+=depth[lca(i,z)];
-        }
-        printf("%lld\n",ans%201314);
-    }
+    dfs(0,1);
 }

@@ -23,19 +23,34 @@ LL find(LL x){
 int main(){
     ios::sync_with_stdio(false);
     cin.tie(0);
-    LL n,m,p;
+    LL n;
     cin>>n;
     for(LL i=1;i<=n;i++)a[i]=i;
-    LL x,y,z;
+    int dp[n+1][n+1];
+    memset(dp,0,sizeof(dp));
     for(LL i=1;i<=n;i++){
-        cin>>x;
-        while(x!=0){
-            a[find(x)]=find(i);
-            cin>>x;}}
+        LL t;
+        cin>>t;
+        while(t!=0){
+            dp[i][t]=true;
+            cin>>t;
+        }
+    }
+    for(LL i=1;i<=n;i++)
+        dp[i][i]=true;
+    for(LL k=1;k<=n;k++)
+        for(LL i=1;i<=n;i++)
+            for(LL j=1;j<=n;j++)
+                dp[i][j]=max(dp[i][k]&dp[k][j],dp[i][j]);
+    for(LL i=1;i<=n;i++)
+        for(LL j=1;j<=n;j++)
+            if(dp[i][j]==true)
+                a[j]=a[i];
     LL ans=0;
     for(LL i=1;i<=n;i++){
         if(a[i]==i)
-        ans++;}
+            ans++;
+    }
     cout<<ans;
     return 0;
 }
