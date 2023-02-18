@@ -11,13 +11,6 @@ struct edge{
 struct node{
 	vector<edge>v;
 };
-LL *father;
-node *a;
-LL find(LL x){
-	if(father[x]==x)
-		return x;
-	return father[x]=find(father[x]);
-}
 int main(){
 	#ifndef ONLINE_JUDGE
 	freopen("P1262.in","r",stdin);
@@ -27,7 +20,13 @@ int main(){
 	// #endif
 	LL n,p;
 	cin>>n>>p;
-	a=new node [n+1];
+	vector<node>a(n+1);
+	vector<LL>father(n+1);
+	function<LL(LL)> find=[&](LL x){
+		if(father[x]==x)
+			return x;
+		return father[x]=find(father[x]);
+	};
 	LL v[n+1]={};
 	for(LL i=0;i<p;i++){
 		LL x,y;
@@ -42,13 +41,26 @@ int main(){
 		cin>>x>>y;
 		a[x].v.push_back({y,0});
 	}
+	vector <LL>depth(n+1,0);
+	function<void(LL,LL)>dfs=[&](LL dep,LL p){
+		if(depth[p]!=0)
+			return;
+		depth[p]=dep;
+		for(auto i:a[p].v){
+			dfs(dep+1,i.to);
+		}
+	};
+	dfs(1,0);
+
+	function<void(LL)>tarjan=[&](LL p){
+		
+	};
+
 	priority_queue<pair<LL,LL>,vector<pair<LL,LL>>,greater<pair<LL,LL>>>q;
 	q.push({0,0});
-	LL dp[n+1];
-	memset(dp,0x3f,sizeof(LL)*(n+1));
+	vector<LL>dp(n+1,114514191981);
 	dp[0]=0;
 	bool b[n+1]={};
-	father=new LL [n+1];
 	for(LL i=0;i<=n;i++){
 		father[i]=i;
 	}
