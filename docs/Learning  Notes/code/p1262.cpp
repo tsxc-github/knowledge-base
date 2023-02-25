@@ -12,9 +12,9 @@ struct node{
 	vector<edge>v;
 };
 int main(){
-	#ifndef ONLINE_JUDGE
-	freopen("P1262.in","r",stdin);
-	#endif
+	// #ifndef ONLINE_JUDGE
+	// freopen("P1262.in","r",stdin);
+	// #endif
 	// #ifndef DEBUGOUT
 	// freopen("catch.out","w",stdout);
 	// #endif
@@ -41,61 +41,74 @@ int main(){
 		cin>>x>>y;
 		a[x].v.push_back({y,0});
 	}
-	vector <LL>depth(n+1,0);
-	function<void(LL,LL)>dfs=[&](LL dep,LL p){
-		if(depth[p]!=0)
-			return;
-		depth[p]=dep;
-		for(auto i:a[p].v){
-			dfs(dep+1,i.to);
-		}
-	};
-	dfs(1,0);
-
-	function<void(LL)>tarjan=[&](LL p){
-		
-	};
-
-	priority_queue<pair<LL,LL>,vector<pair<LL,LL>>,greater<pair<LL,LL>>>q;
-	q.push({0,0});
-	vector<LL>dp(n+1,114514191981);
-	dp[0]=0;
-	bool b[n+1]={};
-	for(LL i=0;i<=n;i++){
-		father[i]=i;
-	}
-	while(!q.empty()){
-		LL p=q.top().second;
-		q.pop();
-		if(b[p]==true)
-			continue;
-		b[p]=true;
-		for(LL i=0;i<a[p].v.size();i++){
-			if(dp[a[p].v[i].to]>(min(dp[a[p].v[i].to],dp[p]+a[p].v[i].v))){
-				dp[a[p].v[i].to]=min(dp[a[p].v[i].to],dp[p]+a[p].v[i].v);
-				q.push({dp[a[p].v[i].to],a[p].v[i].to});
-				if(p!=0)
-					father[a[p].v[i].to]=find(p);
-			}
-			else
-				if(dp[a[p].v[i].to]==(min(dp[a[p].v[i].to],dp[p]+a[p].v[i].v))){
-					if(p!=0)
-						father[a[p].v[i].to]=find(p);
+	
+	vector<LL>points(n+1,0);
+	vector<LL>pointTo[n+1];
+	vector<LL>pointNum[n+1];
+	LL tot=1;
+	[&](){
+		vector<LL>firstTime(n+1,0);
+		vector<LL>lastTime(n+1,0);
+		vector<LL>childTree(n+1,0);
+		vector<LL>pointVal(n+1,0);
+		vector<double>pointLess[n+1];
+		stack<LL>s;
+		vector<bool>inStack(n+1,false);
+		LL now=1;
+		function<void(LL)>tarjan=[&](LL p){
+			s.push(p);
+			inStack[p]=true;
+			firstTime[p]=now;
+			lastTime[p]=now;
+			now++;
+			for(auto i:a[p].v){
+				if(firstTime[i.to]==0){
+					childTree[p]++;
+					tarjan(i.to);
+					lastTime[p]=min(lastTime[p],lastTime[i.to]);
 				}
-		}
-	}
-	LL t;
-	memset(&t,0x3f,sizeof(LL));
+				else if(inStack[i.to]==true){
+					lastTime[p]=min(lastTime[p],firstTime[i.to]);
+				}
+			}
+			if(firstTime[p]==lastTime[p]){
+				while(s.top()!=p){
+						points[s.top()]=tot;
+						inStack[s.top()]=false;
+						s.pop();
+					}
+				points[s.top()]=tot;
+				inStack[s.top()]=false;
+				s.pop();
+				tot++;
+			}
+		};tarjan(0);
+	}();
 	for(LL i=1;i<=n;i++){
-		if(dp[i]==t){
+        for(LL j=0;j<a[i].v.size();j++){
+            if(points[i]==points[a[i].v[j].to]){
+				;
+            }else{
+                pointTo[points[i]].push_back(points[a[i].v[j].to]);
+                pointNum[points[i]].push_back(a[i].v[j].v);
+            }
+        }
+    }
+	LL root=points[0];
+	vector<LL>dp(n+1,INF);
+	dp[root]=0;
+	vector<LL>tmp(tot+1);
+	function<LL(LL)>dfs=[&](LL p){
+		for(LL i=0;i<pointTo[p].size();i++){
+			
+		}
+	};
+	LL ans=dfs(root);
+
+	for(LL i=1;i<=n;i++){
+		if(dp[points[i]]==INF){
 			printf("NO\n%lld",i);
 			return 0;
-		}
-	}
-	LL ans=0;
-	for(LL i=1;i<=n;i++){
-		if(find(i)==i){
-			ans+=v[i];
 		}
 	}
 	printf("YES\n%lld",ans);

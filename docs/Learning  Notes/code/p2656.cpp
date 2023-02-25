@@ -9,14 +9,14 @@ int main(){
     cin>>n>>m;
     vector<LL>v[n+1];
     vector<LL>z[n+1];
-    vector<double>b[n+1];
+    vector<LL>b[n+1];
     for(LL i=0;i<m;i++){
         LL x,y,c;
         double d;
         cin>>x>>y>>c>>d;
         v[x].push_back(y);
         z[x].push_back(c);
-        b[x].push_back(d);
+        b[x].push_back((d+0.000000001)*10);
     }
     LL root;
     cin>>root;
@@ -54,6 +54,8 @@ int main(){
                     inStack[s.top()]=false;
                     s.pop();
                 }
+            points[s.top()]=tot;
+            inStack[s.top()]=false;
             s.pop();
             tot++;
         }
@@ -62,40 +64,39 @@ int main(){
     for(LL i=1;i<=n;i++){
         for(LL j=0;j<v[i].size();j++){
             if(points[i]==points[v[i][j]]){
-                pointVal[i]+=z[i][j];
-                pointVal[i]+=z[i][j]*b[i][j];
-                pointVal[i]+=z[i][j]*b[i][j]*b[i][j];
-                pointVal[i]+=z[i][j]*b[i][j]*b[i][j]*b[i][j];
-                pointTo[i].push_back(points[v[i][j]]);
-                pointNum[i].push_back(pointVal[i]);
-                pointLess[i].push_back(0);
+                LL tmp=z[i][j];
+                while(tmp!=0){
+                    pointVal[points[i]]+=tmp;
+                    tmp*=b[i][j];
+                    tmp/=10;
+                }
             }else{
-                pointTo[i].push_back(points[v[i][j]]);
-                pointNum[i].push_back(z[i][j]);
-                pointLess[i].push_back(b[i][j]);
+                pointTo[points[i]].push_back(points[v[i][j]]);
+                pointNum[points[i]].push_back(z[i][j]);
+                pointLess[points[i]].push_back(b[i][j]);
             }
         }
     }
-    priority_queue<pair<LL,LL>,vector<pair<LL,LL> >,greater<pair<LL,LL> > >q;
-    q.push({0,root});
-    vector<LL>dp(n+1,0);
-    dp[root]=0;
-    vector<bool>vis(n+1,false);
+    root=points[root];
+    queue<LL>q;
+    q.push(root);
+    vector<LL>dp(tot+1,0);
+    dp[root]=pointVal[root];
+    vector<bool>inQueue(tot+1,false);
+    inQueue[root]=true;
     while(!q.empty()){
-        LL p=q.top().second;
+        LL p=q.front();
         q.pop();
-        if(vis[p]==true)
-            continue;
-        vis[p]=true;
         for(LL i=0;i<pointTo[p].size();i++){
-            if(dp[i]<dp[p]+pointNum[p][i]){
-                dp[i]=dp[p]+pointNum[p][i];
-                q.push({dp[i],pointTo[p][i]});
+            if(dp[pointTo[p][i]]<dp[p]+pointNum[p][i]+pointVal[pointTo[p][i]]){
+                dp[pointTo[p][i]]=dp[p]+pointNum[p][i]+pointVal[pointTo[p][i]];
+                if(inQueue[pointTo[p][i]]==false)
+                    q.push(pointTo[p][i]);
             }
         }
     }
     LL ans=0;
-    for(LL i=1;i<=n;i++){
+    for(LL i=1;i<=tot;i++){
         ans=max(ans,dp[i]);
     }
     printf("%lld",ans);
