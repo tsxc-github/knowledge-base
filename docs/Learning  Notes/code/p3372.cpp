@@ -1,145 +1,188 @@
-#include<iostream>
-#include<cstdio>
-#include<iomanip>
-#include<algorithm>
-#include<cstring>
-#include<stack>
-#include<math.h>
-#include<cctype>
-#include<map>
-#include<queue>
-#include<vector>
-#define LL long long
-#define LD long double
-#define US unsigned short
+#include <bits/stdc++.h>
 using namespace std;
-#define MAX 100
-#ifdef ONLINE_JUDGE
-#define MAX 114514
-#endif
-struct node{
-    node* left;
-    node* right;
-    node* father;
-    LL data;
-    LL v;
-    LL start;
-    LL end;
-    node(node* father,LL start,LL end,LL data,node* left=NULL,node* right=NULL){
-        this->data=data;
-        this->left=left;
-        this->right=right;
-        this->father=father;
-        this->start=start;
-        this->end=end;
-        v=0;
+#define LL long long
+
+template< typename Type > struct SegmentTree
+{
+    Type data;
+    Type lazyTag;
+    LL left;
+    LL right;
+    SegmentTree* leftSon = nullptr;
+    SegmentTree* rightSon = nullptr;
+
+    // 配置模板函数方法
+    const Type null = 0;
+    void UpdateLazyTag(Type& lazyTag, Type changeNumber) {
+        lazyTag += changeNumber;
+    }
+    void UpdateData(Type& data,
+                    LL Number,  // 元素个数
+                    Type changeNumber) {
+        data += changeNumber * Number;
+    }
+    // 向上更新节点方法
+    Type PushUpMode(Type a, Type b) {
+        return a + b;
+    }
+    // 向下更新节点方法(更新lazyTag)
+    void PushDownMode(Type& fatherLazyTag,
+                      LL Number,  // 元素个数
+                      Type& sonLazyTag,
+                      Type& sonData) {
+        UpdateLazyTag(sonLazyTag, fatherLazyTag);
+        UpdateData(sonData, Number, fatherLazyTag);
+    }
+
+    // 更新当前节点
+    void PushUp() {
+        PushDown();
+        if(leftSon != nullptr && rightSon != nullptr) {
+            data = PushUpMode(leftSon->data, rightSon->data);
+        }
+        else if(leftSon != nullptr) {
+            data = leftSon->data;
+        }
+        else if(rightSon != nullptr) {
+            data = rightSon->data;
+        }
+    }
+
+    // 释放lazyTag
+    void PushDown() {
+        if(lazyTag==null)
+            return;
+        if(leftSon != nullptr) {
+            PushDownMode(lazyTag,
+                         leftSon->right - leftSon->left + 1,
+                         leftSon->lazyTag,
+                         leftSon->data);
+        }
+        if(rightSon != nullptr) {
+            PushDownMode(lazyTag,
+                         rightSon->right - rightSon->left + 1,
+                         rightSon->lazyTag,
+                         rightSon->data);
+        }
+        lazyTag = null;
+    }
+
+    // 区间查询
+    Type find(LL start, LL end) {
+        // 无效范围
+        if(left > end || right < start) {
+            // 因为是模板函数，不允许return无效值，此为一个异常
+            throw "无效区间查询范围";
+        }
+
+        PushDown();
+        // 找到最终目标
+        if((start == left) && (end == right)) {
+            return data;
+        }
+
+        // 搜索左右子树
+        LL middle =
+            (right - left) / 2 + left;  // 等价于(left+right)/2为防止溢出
+        // 只存在左子树或右子树
+        if(end <= middle) {
+            return leftSon->find(start, end);
+        }
+        else if(start > middle) {
+            return rightSon->find(start, end);
+        }
+        // 分别存在左右子树
+        return PushUpMode(leftSon->find(start, middle),
+                          rightSon->find(middle + 1, end));
+    }
+
+    // 修改
+    void Update(LL start, LL end, Type changeNumber) {
+        // 无效范围
+        if(left > end || right < start) {
+            // 不可能出现无效范围
+            throw "无效区间修改范围";
+        }
+
+        PushDown();
+        // 找到最终目标
+        if((start == left) && (end == right)) {
+            UpdateLazyTag(lazyTag, changeNumber);
+            UpdateData(data, right - left + 1, changeNumber);
+        }
+        else {
+            // 只修改左子树或右子树
+            LL middle =
+                (right - left) / 2 + left;  // 等价于(left+right)/2为防止溢出
+            if(end <= middle) {
+                leftSon->Update(start, end, changeNumber);
+            }
+            else if(start > middle) {
+                rightSon->Update(start, end, changeNumber);
+            }
+            else {
+                // 分别存在左右子树
+                leftSon->Update(start, middle, changeNumber);
+                rightSon->Update(middle + 1, end, changeNumber);
+            }
+        }
+
+        PushUp();
+    }
+
+    // 建树
+    SegmentTree(Type importData[], LL start, LL end) {
+        left = start;
+        right = end;
+        lazyTag = null;
+
+        // 当为叶子结点
+        if(start == end) {
+            data = importData[start];
+            return;
+        }
+
+        // 不为叶子结点
+        LL middle = (end - start) / 2 + start;  // 等价于(start+end)/2为防止溢出
+        // 递归建树
+        leftSon = new SegmentTree(importData, start, middle);
+        rightSon = new SegmentTree(importData, middle + 1, end);
+        PushUp();
     }
 };
-node* build(LL a[],LL asize){
-    queue<node*> q;
-    for(LL i=0;i<asize;i++){
-        q.push(new node(NULL,i,i,a[i]));}
-    node* t1=NULL;
-    node* t2=NULL;
-    while(q.size()!=1){
-            LL n=q.size();
-            for(LL i=0;i<n;i++){
-                if(t1==NULL){
-                    t1=q.front();
-                    q.pop();}
-                else{
-                    if(t2==NULL){
-                        t2=q.front();
-                        q.pop();
-                        node* t=new node(NULL,t1->start,t2->end,t1->data+t2->data,t1,t2);
-                        t->left->father=t;
-                        t->right->father=t;
-                        q.push(t);
-                        t1=NULL;
-                        t2=NULL;}}}
-            if(t1!=NULL){
-                q.push(t1);
-                t1=NULL;}}
-    return q.front();
-}
 
-void maketag_jia(node* root,LL k){
-    root->v+=k;
-    root->data+=k*(root->end-root->start+1);
-}
-void update_down_jia(node* root){
-    if(root->left!=NULL)
-    root->left->v+=root->v,root->left->data+=(root->left->end-root->left->start+1)*root->v;
-    if(root->right!=NULL)
-    root->right->v+=root->v,root->right->data+=(root->right->end-root->right->start+1)*root->v;
-    root->v=0;
-}
-void update_up_jia(node* root){
-    root->data=root->left->data+root->right->data;
-}
-void change_jia(node* root,LL start,LL end,LL k){
-    if(root==NULL)return;
-    if(root->start>end||root->end<start){
-        return;}
-    if(root->start>=start&&root->end<=end){
-        maketag_jia(root,k);
-        return;}
-    update_down_jia(root);
-    change_jia(root->left,start,end,k);
-    change_jia(root->right,start,end,k);
-    update_up_jia(root);
-}
-LL find(node* root,LL start,LL end){
-    if(root==NULL)return 0;
-    if(root->start>end||root->end<start){
-        return 0;}
-    if(root->start>=start&&root->end<=end)
-    return root->data;
-    update_down_jia(root);
-    return find(root->left,start,end)+find(root->right,start,end);
-}
-int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    LL n,m;
-    cin>>n>>m;
-    LL a[n];
-    for(LL i=0;i<n;i++){
-        cin>>a[i];}
-    node* root=build(a,n);
-    for(LL i=0;i<m;i++){
+void run() {
+    LL n, m;
+    cin >> n >> m;
+    LL numbers[n];
+    for(LL i = 0; i < n; i++) {
+        cin >> numbers[i];
+    }
+    SegmentTree< LL > tree(numbers, 0, n - 1);
+    while(m--) {
         LL temp;
-        LL start,end;
-        cin>>temp>>start>>end;
-        if(temp==1){
-            LL k;
-            cin>>k;
-            change_jia(root,start-1,end-1,k);
+        cin >> temp;
+        LL x, y, k;
+        switch(temp) {
+            case 1:
+                cin >> x >> y >> k;
+                // 因为输入数据从1开始计数，所以查询范围要减1
+                tree.Update(x - 1, y - 1, k);
+                break;
+            case 2:
+                cin >> x >> y;
+                printf("%lld\n", tree.find(x - 1, y - 1));
+                break;
         }
-        else{
-            update_down_jia(root);
-            printf("%lld\n",find(root,start-1,end-1));}}
-    return 0;
-    
+    }
 }
-/*
-in:
-8 10
-659 463 793 740 374 330 772 681
-1 5 8 39
-2 5 8
-1 3 6 3
-1 5 8 90
-1 1 5 21
-2 3 8
-1 3 8 17
-1 4 7 52
-2 2 6
-1 2 7 41
-
-out:
-2313
-4281
-3278
-
-*/
+int main() {
+    try {
+        run();
+    }
+    catch(const char* s) {
+        cout << endl << "ERROR:" << s << endl;
+        return 0;
+    }
+    return 0;
+}
