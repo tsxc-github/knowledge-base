@@ -7,7 +7,7 @@ const LL MOD = 571373;
 
 // 配置模板函数方法
 Type PushUpMode(Type a, Type b) {
-    return a + b % MOD;
+    return (a + b) % MOD;
 };
 
 struct SegmentTree
@@ -22,32 +22,38 @@ struct SegmentTree
     void ChangeLazyTag(Type changeNumber, LL operation) {
         switch(operation) {
             case 0:  // 加法
-                lazyTag[0] += changeNumber;
+                lazyTag[0] += changeNumber % MOD;
                 break;
             case 1:  // 乘法
-                lazyTag[1] *= changeNumber;
-                lazyTag[0] *= changeNumber;
+                lazyTag[1] *= changeNumber % MOD;
+                lazyTag[0] *= changeNumber % MOD;
                 break;
             default:
                 throw "ChangeLazyTag时operation不在正常范围内";
                 break;
         }
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
     }
 
     void ChangeDataByLazyTag(Type lazyTag[],
                              LL number  // 元素个数
     ) {
         // 乘法
-        data *= lazyTag[1];
+        data *= lazyTag[1] % MOD;
         // 加法
-        data += lazyTag[0] * number;
+        data += lazyTag[0] * number % MOD;
     }
 
     void PushDownMode(LL number,           // 元素个数
                       SegmentTree* son) {  // 向下更新节点方法
         son->ChangeDataByLazyTag(lazyTag, number);
-        for(LL i = 0; i < HowManyOperation; i++)
-            son->ChangeLazyTag(lazyTag[i], i);
+        son->ChangeLazyTag(lazyTag[1] % MOD, 1);  // 乘法
+        son->ChangeLazyTag(lazyTag[0] % MOD, 0);  // 加法
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
     }
 
     LL ComputeMiddle(LL left, LL right) {
@@ -66,6 +72,9 @@ struct SegmentTree
         else if(rightSon != nullptr) {
             data = rightSon->data;
         }
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
     }
 
     // 释放lazyTag
@@ -89,6 +98,8 @@ struct SegmentTree
             throw "无效区间查询范围";
         }
 
+        data %= MOD;
+
         PushDown();
         // 找到最终目标
         if((start == left) && (end == right)) {
@@ -99,14 +110,15 @@ struct SegmentTree
         LL middle = ComputeMiddle(left, right);
         // 只存在左子树或右子树
         if(end <= middle) {
-            return leftSon->Find(start, end);
+            return leftSon->Find(start, end) % MOD;
         }
         else if(start > middle) {
-            return rightSon->Find(start, end);
+            return rightSon->Find(start, end) % MOD;
         }
         // 分别存在左右子树
         return PushUpMode(leftSon->Find(start, middle),
-                          rightSon->Find(middle + 1, end));
+                          rightSon->Find(middle + 1, end)) %
+            MOD;
     }
 
     // 修改
@@ -116,7 +128,9 @@ struct SegmentTree
             // 不可能出现无效范围
             throw "无效区间修改范围";
         }
-
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
         PushDown();
         // 找到最终目标
         if((start == left) && (end == right)) {
@@ -166,7 +180,16 @@ struct SegmentTree
         PushUp();
     }
 };
-
+void Write(Type a) {
+    if(a < 0) {
+        putchar('-');
+        a = -a;
+    }
+    if(a == 0)
+        return;
+    Write(a / 10);
+    putchar(a % 10 + '0');
+}
 void run() {
 #ifndef ONLINE_JUDGE
     freopen("P3373_2.in", "r", stdin);
@@ -198,7 +221,8 @@ void run() {
                 break;
             case 3:
                 cin >> x >> y;
-                printf("%lld\n", tree.Find(x - 1, y - 1) % MOD);
+                Write(tree.Find(x - 1, y - 1) % MOD);
+                putchar('\n');
                 break;
         }
     }
