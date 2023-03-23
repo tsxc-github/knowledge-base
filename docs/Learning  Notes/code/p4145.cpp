@@ -35,41 +35,41 @@ struct BinaryIndexTree
         this->n = n;
         c = new LL[n + 1];
         memset(c, 0, sizeof(LL) * (n + 1));
+        for(LL i = 1; i <= n; i++) {
+            LL temp;
+            cin >> temp;
+            Update(i, temp);
+        }
     }
-
-    BinaryIndexTree(LL n, LL a[])
-        : BinaryIndexTree(n) {}
 };
 
 void run() {
-    LL n;
+    LL n, m;
     cin >> n;
-    struct Num
-    {
-        LL index;
-        LL number;
-    } inputNumbers[n + 1];
-    for(LL i = 1; i <= n; i++) {
-        cin >> inputNumbers[i].number;
-        inputNumbers[i].index = i;
-    }
-    sort(inputNumbers + 1, inputNumbers + 1 + n, [](Num a, Num b) {
-        if(a.number != b.number)
-            return a.number < b.number;
-        return a.index < b.index;
-    });
-    LL ranks[n + 1];
-    for(LL i = 1; i <= n; i++) {
-        ranks[inputNumbers[i].index] = i;
-    }
     BinaryIndexTree BIT(n);
-    LL ans = 0;
-    for(LL i = 1; i <= n; i++) {
-        BIT.Update(ranks[i], 1);
-        ans += i - BIT.Compute(ranks[i]);
+    cin >> m;
+    for(LL i = 0; i < m; i++) {
+        LL operation;
+        cin >> operation;
+        LL x, y;
+        switch(operation) {
+            case 0:
+                cin >> x >> y;
+                if(x > y)
+                    swap(x, y);
+                for(LL i = x; i <= y; i++)
+                    BIT.Update(i, sqrt(BIT.Find(x, y))-BIT.Find(x, y));
+                break;
+            case 1:
+                cin >> x >> y;
+                if(x > y)
+                    swap(x, y);
+                printf("%lld\n", BIT.Find(x, y));
+                break;
+            default:
+                throw "方法run()输入操作数错误";
+        }
     }
-    printf("%lld", ans);
-    return;
 }
 
 int main() {

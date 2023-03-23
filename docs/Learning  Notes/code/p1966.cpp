@@ -42,31 +42,52 @@ struct BinaryIndexTree
 };
 
 void run() {
+    const LL MOD = 99999997;
     LL n;
     cin >> n;
     struct Num
     {
         LL index;
         LL number;
-    } inputNumbers[n + 1];
+    };
+    Num a[n + 1];
+    Num b[n + 1];
     for(LL i = 1; i <= n; i++) {
-        cin >> inputNumbers[i].number;
-        inputNumbers[i].index = i;
+        cin >> a[i].number;
+        a[i].index = i;
     }
-    sort(inputNumbers + 1, inputNumbers + 1 + n, [](Num a, Num b) {
+    sort(a + 1, a + 1 + n, [](Num a, Num b) {
         if(a.number != b.number)
             return a.number < b.number;
         return a.index < b.index;
     });
-    LL ranks[n + 1];
     for(LL i = 1; i <= n; i++) {
-        ranks[inputNumbers[i].index] = i;
+        cin >> b[i].number;
+        b[i].index = i;
+    }
+    sort(b + 1, b + 1 + n, [](Num a, Num b) {
+        if(a.number != b.number)
+            return a.number < b.number;
+        return a.index < b.index;
+    });
+    LL al[n + 1];
+    LL bl[n + 1];
+    for(LL i = 1; i <= n; i++) {
+        al[a[i].index] = i;
+    }
+    for(LL i = 1; i <= n; i++) {
+        bl[b[i].index] = i;
+    }
+    LL c[n + 1];
+    for(LL i = 1; i <= n; i++) {
+        c[b[i].index] = a[i].index;
     }
     BinaryIndexTree BIT(n);
     LL ans = 0;
     for(LL i = 1; i <= n; i++) {
-        BIT.Update(ranks[i], 1);
-        ans += i - BIT.Compute(ranks[i]);
+        BIT.Update(c[i], 1);
+        ans += i - BIT.Compute(c[i]);
+        ans %= MOD;
     }
     printf("%lld", ans);
     return;
