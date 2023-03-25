@@ -38,7 +38,11 @@ struct BinaryIndexTree
     }
 
     BinaryIndexTree(LL n, LL a[])
-        : BinaryIndexTree(n) {}
+        : BinaryIndexTree(n) {
+        for(LL i = 1; i <= n; i++) {
+            Update(i, a[i]);
+        }
+    }
 };
 
 void run() {
