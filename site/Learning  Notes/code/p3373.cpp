@@ -1,139 +1,239 @@
-#include<iostream>
-#include<cstdio>
-#include<iomanip>
-#include<algorithm>
-#include<cstring>
-#include<stack>
-#include<math.h>
-#include<cctype>
-#include<map>
-#include<queue>
-#include<vector>
-#define LL long long
-#define LD long double
-#define US unsigned short
+#include <bits/stdc++.h>
 using namespace std;
-#define MAX 100
-#ifdef ONLINE_JUDGE
-#define MAX 114514
-#endif
-struct node{
-    node* left;
-    node* right;
-    node* father;
-    LL data;
-    LL v;
-    LL start;
-    LL end;
-    node(node* father,LL start,LL end,LL data,node* left=NULL,node* right=NULL){
-        this->data=data;
-        this->left=left;
-        this->right=right;
-        this->father=father;
-        this->start=start;
-        this->end=end;
-        v=0;
+#define LL long long
+#define Type LL
+#define HowManyOperation 2
+const LL MOD = 571373;
+
+// 配置模板函数方法
+Type PushUpMode(Type a, Type b) {
+    return (a + b) % MOD;
+};
+
+struct SegmentTree
+{
+    Type data;
+    Type lazyTag[HowManyOperation];
+    LL left;
+    LL right;
+    SegmentTree* leftSon = nullptr;
+    SegmentTree* rightSon = nullptr;
+
+    void ChangeLazyTag(Type changeNumber, LL operation) {
+        switch(operation) {
+            case 0:  // 加法
+                lazyTag[0] += changeNumber % MOD;
+                break;
+            case 1:  // 乘法
+                lazyTag[1] *= changeNumber % MOD;
+                lazyTag[0] *= changeNumber % MOD;
+                break;
+            default:
+                throw "ChangeLazyTag时operation不在正常范围内";
+                break;
+        }
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
+    }
+
+    void ChangeDataByLazyTag(Type lazyTag[],
+                             LL number  // 元素个数
+    ) {
+        // 乘法
+        data *= lazyTag[1] % MOD;
+        // 加法
+        data += lazyTag[0] * number % MOD;
+    }
+
+    void PushDownMode(LL number,           // 元素个数
+                      SegmentTree* son) {  // 向下更新节点方法
+        son->ChangeDataByLazyTag(lazyTag, number);
+        son->ChangeLazyTag(lazyTag[1] % MOD, 1);  // 乘法
+        son->ChangeLazyTag(lazyTag[0] % MOD, 0);  // 加法
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
+    }
+
+    LL ComputeMiddle(LL left, LL right) {
+        return (right - left) / 2 + left;  // 等价于(left+right)/2为防止溢出
+    }
+
+    // 更新当前节点
+    void PushUp() {
+        PushDown();
+        if(leftSon != nullptr && rightSon != nullptr) {
+            data = PushUpMode(leftSon->data, rightSon->data);
+        }
+        else if(leftSon != nullptr) {
+            data = leftSon->data;
+        }
+        else if(rightSon != nullptr) {
+            data = rightSon->data;
+        }
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
+    }
+
+    // 释放lazyTag
+    void PushDown() {
+        data %= MOD;
+        if(leftSon != nullptr) {
+            PushDownMode(leftSon->right - leftSon->left + 1, leftSon);
+        }
+        if(rightSon != nullptr) {
+            PushDownMode(rightSon->right - rightSon->left + 1, rightSon);
+        }
+        InitLazyTag(lazyTag);
+        data %= MOD;
+    }
+
+    // 区间查询
+    Type Find(LL start, LL end) {
+        // 无效范围
+        if(left > end || right < start) {
+            // 因为是模板函数，不允许return无效值，此为一个异常
+            throw "无效区间查询范围";
+        }
+
+        data %= MOD;
+
+        PushDown();
+        // 找到最终目标
+        if((start == left) && (end == right)) {
+            return data;
+        }
+
+        // 搜索左右子树
+        LL middle = ComputeMiddle(left, right);
+        // 只存在左子树或右子树
+        if(end <= middle) {
+            return leftSon->Find(start, end) % MOD;
+        }
+        else if(start > middle) {
+            return rightSon->Find(start, end) % MOD;
+        }
+        // 分别存在左右子树
+        return PushUpMode(leftSon->Find(start, middle),
+                          rightSon->Find(middle + 1, end)) %
+            MOD;
+    }
+
+    // 修改
+    void Update(LL start, LL end, Type changeNumber, LL operation = 0) {
+        // 无效范围
+        if(left > end || right < start) {
+            // 不可能出现无效范围
+            throw "无效区间修改范围";
+        }
+        lazyTag[1] %= MOD;
+        lazyTag[0] %= MOD;
+        data %= MOD;
+        PushDown();
+        // 找到最终目标
+        if((start == left) && (end == right)) {
+            ChangeLazyTag(changeNumber, operation);
+            ChangeDataByLazyTag(lazyTag, right - left + 1);
+        }
+        else {
+            // 只修改左子树或右子树
+            LL middle = ComputeMiddle(left, right);
+            if(end <= middle) {
+                leftSon->Update(start, end, changeNumber, operation);
+            }
+            else if(start > middle) {
+                rightSon->Update(start, end, changeNumber, operation);
+            }
+            else {
+                // 分别存在左右子树
+                leftSon->Update(start, middle, changeNumber, operation);
+                rightSon->Update(middle + 1, end, changeNumber, operation);
+            }
+        }
+
+        PushUp();
+    }
+
+    void InitLazyTag(Type lazyTag[]) {
+        lazyTag[0] = 0;  // 加法
+        lazyTag[1] = 1;  // 乘法
+    }
+    // 建树
+    SegmentTree(Type importData[], LL start, LL end) {
+        left = start;
+        right = end;
+        InitLazyTag(lazyTag);
+
+        // 当为叶子结点
+        if(start == end) {
+            data = importData[start];
+            return;
+        }
+
+        // 不为叶子结点
+        LL middle = ComputeMiddle(start, end);
+        // 递归建树
+        leftSon = new SegmentTree(importData, start, middle);
+        rightSon = new SegmentTree(importData, middle + 1, end);
+        PushUp();
     }
 };
-node* build(LL a[],LL asize){
-    queue<node*> q;
-    for(LL i=0;i<asize;i++){
-        q.push(new node(NULL,i,i,a[i]));}
-    node* t1=NULL;
-    node* t2=NULL;
-    while(q.size()!=1){
-            LL n=q.size();
-            for(LL i=0;i<n;i++){
-                if(t1==NULL){
-                    t1=q.front();
-                    q.pop();}
-                else{
-                    if(t2==NULL){
-                        t2=q.front();
-                        q.pop();
-                        node* t=new node(NULL,t1->start,t2->end,t1->data+t2->data,t1,t2);
-                        t->left->father=t;
-                        t->right->father=t;
-                        q.push(t);
-                        t1=NULL;
-                        t2=NULL;}}}
-            if(t1!=NULL){
-                q.push(t1);
-                t1=NULL;}}
-    return q.front();
+void Write(Type a) {
+    if(a < 0) {
+        putchar('-');
+        a = -a;
+    }
+    if(a == 0)
+        return;
+    Write(a / 10);
+    putchar(a % 10 + '0');
 }
-
-void maketag_jia(node* root,LL k){
-    root->v+=k;
-    root->data+=k*(root->end-root->start+1);
-}
-void update_down_jia(node* root){
-    if(root->left!=NULL)
-    root->left->v+=root->v,root->left->data+=(root->left->end-root->left->start+1)*root->v;
-    if(root->right!=NULL)
-    root->right->v+=root->v,root->right->data+=(root->right->end-root->right->start+1)*root->v;
-    root->v=0;
-}
-void update_up_jia(node* root){
-    root->data=root->left->data+root->right->data;
-}
-void change_jia(node* root,LL start,LL end,LL k){
-    if(root==NULL)return;
-    if(root->start>end||root->end<start){
-        return;}
-    if(root->start>=start&&root->end<=end){
-        maketag_jia(root,k);
-        return;}
-    update_down_jia(root);
-    change_jia(root->left,start,end,k);
-    change_jia(root->right,start,end,k);
-    update_up_jia(root);
-}
-LL find(node* root,LL start,LL end){
-    if(root==NULL)return 0;
-    if(root->start>end||root->end<start){
-        return 0;}
-    if(root->start>=start&&root->end<=end)
-    return root->data;
-    update_down_jia(root);
-    return find(root->left,start,end)+find(root->right,start,end);
-}
-int main(){
-    ios::sync_with_stdio(false);
-    cin.tie(NULL);
-    LL n,m;
-    cin>>n>>m;
-    LL a[n];
-    for(LL i=0;i<n;i++){
-        cin>>a[i];}
-    node* root=build(a,n);
-    for(LL i=0;i<m;i++){
+void run() {
+#ifndef ONLINE_JUDGE
+    freopen("P3373_2.in", "r", stdin);
+    freopen("P3373.out", "w", stdout);
+#endif
+    LL n, m, mod;
+    cin >> n >> m >> mod;
+    Type numbers[n];
+    for(LL i = 0; i < n; i++) {
         LL temp;
-        LL start,end;
-        cin>>temp>>start>>end;
-        if(temp==1){
-            LL k;
-            cin>>k;
-            change_jia(root,start-1,end-1,k);
+        cin >> temp;
+        numbers[i] = temp % MOD;
+    }
+    SegmentTree tree(numbers, 0, n - 1);
+    while(m--) {
+        LL temp;
+        cin >> temp;
+        LL x, y, k;
+        switch(temp) {
+            case 1:
+                cin >> x >> y >> k;
+                // 因为输入数据从1开始计数，所以查询范围要减1
+                tree.Update(x - 1, y - 1, k % MOD, 1);
+                break;
+            case 2:
+                cin >> x >> y >> k;
+                // 因为输入数据从1开始计数，所以查询范围要减1
+                tree.Update(x - 1, y - 1, k % MOD, 0);
+                break;
+            case 3:
+                cin >> x >> y;
+                Write(tree.Find(x - 1, y - 1) % MOD);
+                putchar('\n');
+                break;
         }
-        else{
-            update_down_jia(root);
-            printf("%lld\n",find(root,start-1,end-1));}}
-    return 0;
-    
+    }
 }
-/*
-in:
-5 5 38
-1 5 4 2 3
-2 1 4 1
-3 2 5
-1 2 4 2
-2 3 5 5
-3 1 4
-
-out:
-17
-2
-
-*/
+int main() {
+    try {
+        run();
+    }
+    catch(const char* s) {
+        cout << endl << "ERROR:" << s << endl;
+        return 0;
+    }
+    return 0;
+}

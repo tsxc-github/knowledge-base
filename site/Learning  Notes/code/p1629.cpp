@@ -1,6 +1,7 @@
 #include<bits/stdc++.h>
 #define LL long long
 using namespace std;
+const LL INF=1145141919810;
 struct edge{
     LL v;
     LL to;
@@ -10,14 +11,20 @@ struct node{
 };
 node* z;
 node* f;
-void dij(node* z,LL* dp[]){
+bool* b;
+void dij(node* z,LL dp[]){
     priority_queue<pair<LL,LL>,vector<pair<LL,LL>>,greater<pair<LL,LL>>> q;
     q.push({0,1});
+    dp[1]=0;
     while(!q.empty()){
         LL p=q.top().second;
         q.pop();
+        if(b[p]==true)
+            continue;
+        b[p]=true;
         for(LL i=0;i<z[p].v.size();i++){
-            
+            dp[z[p].v[i].to]=min(dp[z[p].v[i].to],dp[p]+z[p].v[i].v);
+            q.push({dp[z[p].v[i].to],z[p].v[i].to});
         }
     }
 }
@@ -34,14 +41,21 @@ int main(){
         z[u].v.push_back({w,v});
         f[v].v.push_back({w,u});
     }
-    LL* zdp[n+1];
-    LL* fdp[n+1];
-    for(LL i=0;i<=n;i++){
-        zdp[i]=new LL [n+1];
-        fdp[i]=new LL [n+1];
-        memset(zdp[i],127,sizeof(LL)*(n+1));
-        memset(fdp[i],127,sizeof(LL)*(n+1));
+    LL zdp[n+1];
+    LL fdp[n+1];
+    for(LL i=1;i<=n;i++){
+        zdp[i]=INF;
+        fdp[i]=INF;
     }
+    b=new bool[n+1];
+    memset(b,0,sizeof(bool)*(n+1));
     dij(z,zdp);
-    dij(z,fdp);
+    memset(b,0,sizeof(bool)*(n+1));
+    dij(f,fdp);
+    LL ans=0;
+    for(LL i=1;i<=n;i++){
+        ans+=zdp[i]+fdp[i];
+    }
+    printf("%lld",ans);
+    return 0;
 }

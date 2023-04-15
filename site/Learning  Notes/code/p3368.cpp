@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-#define LL long long
+#define LL int
 #define Type LL
 #define HowManyFunctions 2
 
@@ -203,8 +203,8 @@ void run() {
                 tree.Update(x - 1, y - 1, k);
                 break;
             case 2:
-                cin >> x >> y;
-                printf("%lld\n", tree.Find(x - 1, y - 1));
+                cin >> x;
+                printf("%lld\n", tree.Find(x - 1, x - 1));
                 break;
         }
     }

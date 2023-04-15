@@ -2,47 +2,64 @@
 using namespace std;
 #define LL long long
 #define Type LL
-#define HowManyFunctions 2
+#define HowManyOperation 1
+
+enum Operation {
+    // addition = 3,        // 加法
+    // multiplication = 1,  // 乘法
+    exclusiveOr = 0      // 异或
+};
+// 配置模板函数方法
+Type PushUpMode(Type a, Type b) {
+    return a + b;
+};
 
 struct SegmentTree
 {
     Type data;
     Type lazyTag[HowManyOperation];
-    LL notUpdateLazyTag = -1;  // 当为-1表示无lazyTag需要更新
     LL left;
     LL right;
     SegmentTree* leftSon = nullptr;
     SegmentTree* rightSon = nullptr;
 
-    // 配置模板函数方法
-    function< Type(Type, Type) > UpdateLazyTagFunctions[HowManyOperation] = {
-        [&](Type lazyTag, Type changeNumber) { return lazyTag + changeNumber; },
-        [&](Type lazyTag, Type changeNumber) {
-            return lazyTag * changeNumber;
-        }};
-    function< void(Type&, LL, Type) > UpdateDataFunctions[HowManyOperation] = {
-        [&](Type& data,
-            LL Number,  // 元素个数
-            Type changeNumber) { data += changeNumber * Number; },
-        [&](Type& data,
-            LL Number,  // 元素个数
-            Type changeNumber) { data *= changeNumber; }};
-    Type PushUpMode(Type a, Type b) {
-        return a + b;
-    };
-
-    void PushDownMode(LL number,
-                      SegmentTree* son) {  // 向下更新节点方法
-        if(son->notUpdateLazyTag != notUpdateLazyTag) {
-            son->PushDown();
+    void ChangeLazyTag(Type changeNumber, Operation operation) {
+        switch(operation) {
+            // case addition:  // 加法
+            //     lazyTag[addition] += changeNumber;
+            //     break;
+            // case multiplication:  // 乘法
+            //     lazyTag[multiplication] *= changeNumber;
+            //     lazyTag[addition] *= changeNumber;
+            //     break;
+            case exclusiveOr:  // 异或
+                lazyTag[exclusiveOr] ^= changeNumber;
+                break;
+            default:
+                throw "ChangeLazyTag时operation不在正常范围内";
+                break;
         }
-        son->notUpdateLazyTag = notUpdateLazyTag;
-        son->lazyTag[notUpdateLazyTag] =
-            UpdateLazyTagFunctions[notUpdateLazyTag](
-                son->lazyTag[notUpdateLazyTag], lazyTag[notUpdateLazyTag]);
-        UpdateDataFunctions[notUpdateLazyTag](
-            son->data, number, lazyTag[notUpdateLazyTag]);
-    };
+    }
+
+    void ChangeDataByLazyTag(Type lazyTag[],
+                             LL number  // 元素个数
+    ) {
+        // 乘法
+        // data *= lazyTag[multiplication];
+        // // 加法
+        // data += lazyTag[addition] * number;
+        // 异或
+        if(lazyTag[exclusiveOr] == 1)
+            data = number - data;
+    }
+
+    void PushDownMode(LL number,           // 元素个数
+                      SegmentTree* son) {  // 向下更新节点方法
+        son->ChangeDataByLazyTag(lazyTag, number);
+        // son->ChangeLazyTag(lazyTag[multiplication], multiplication);  // 乘法
+        // son->ChangeLazyTag(lazyTag[addition], addition);              // 加法
+        son->ChangeLazyTag(lazyTag[exclusiveOr], exclusiveOr);
+    }   
 
     LL ComputeMiddle(LL left, LL right) {
         return (right - left) / 2 + left;  // 等价于(left+right)/2为防止溢出
@@ -64,16 +81,13 @@ struct SegmentTree
 
     // 释放lazyTag
     void PushDown() {
-        if(notUpdateLazyTag == -1)
-            return;
         if(leftSon != nullptr) {
             PushDownMode(leftSon->right - leftSon->left + 1, leftSon);
         }
         if(rightSon != nullptr) {
             PushDownMode(rightSon->right - rightSon->left + 1, rightSon);
         }
-        InitLazyTag(notUpdateLazyTag);
-        notUpdateLazyTag = -1;
+        InitLazyTag(lazyTag);
     }
 
     // 区间查询
@@ -105,22 +119,17 @@ struct SegmentTree
     }
 
     // 修改
-    void Update(LL start, LL end, Type changeNumber, LL operation = 0) {
+    void Update(LL start, LL end, Type changeNumber, Operation operation) {
         // 无效范围
         if(left > end || right < start) {
             // 不可能出现无效范围
             throw "无效区间修改范围";
         }
-
         PushDown();
         // 找到最终目标
         if((start == left) && (end == right)) {
-            if(notUpdateLazyTag != -1)
-                PushDown();
-            notUpdateLazyTag = operation;
-            lazyTag[operation] = changeNumber;
-            UpdateDataFunctions[operation](
-                data, left - right + 1, changeNumber);
+            ChangeLazyTag(changeNumber, operation);
+            ChangeDataByLazyTag(lazyTag, right - left + 1);
         }
         else {
             // 只修改左子树或右子树
@@ -141,33 +150,16 @@ struct SegmentTree
         PushUp();
     }
 
-    void InitLazyTag(LL notUpdateLazyTag) {
-        if(notUpdateLazyTag == -1) {
-            throw "InitLazyTag时notUpdateLazyTag为-1";
-        }
-        if(notUpdateLazyTag == -2) {
-            for(LL i = 0; i < HowManyOperation; i++) {
-                InitLazyTag(i);
-            }
-        }
-        else {
-            switch(notUpdateLazyTag) {
-                case 0:
-                    lazyTag[notUpdateLazyTag] = 0;
-                    break;
-                case 1:
-                    lazyTag[notUpdateLazyTag] = 1;
-                    break;
-                default:
-                    throw "InitLazyTag时notUpdateLazyTag不在正常范围内";
-            }
-        }
+    void InitLazyTag(Type lazyTag[]) {
+        // lazyTag[addition] = 0;        // 加法
+        // lazyTag[multiplication] = 1;  // 乘法
+        lazyTag[exclusiveOr] = 0;
     }
     // 建树
     SegmentTree(Type importData[], LL start, LL end) {
         left = start;
         right = end;
-        InitLazyTag(-2);
+        InitLazyTag(lazyTag);
 
         // 当为叶子结点
         if(start == end) {
@@ -183,29 +175,42 @@ struct SegmentTree
         PushUp();
     }
 };
-
+// void Write(Type a) {
+//     if(a < 0) {
+//         putchar('-');
+//         a = -a;
+//     }
+//     if(a == 0)
+//         return;
+//     Write(a / 10);
+//     putchar(a % 10 + '0');
+// }
 void run() {
+#ifndef ONLINE_JUDGE
+    // freopen("P3373_2.in", "r", stdin);
+    // freopen("P3373.out", "w", stdout);
+#endif
     LL n, m;
     cin >> n >> m;
-    LL numbers[n];
-    for(LL i = 0; i < n; i++) {
-        cin >> numbers[i];
-    }
+    char t;
+    Type numbers[n]={};
     SegmentTree tree(numbers, 0, n - 1);
     while(m--) {
         LL temp;
         cin >> temp;
-        LL x, y, k;
+        LL x, y;
         switch(temp) {
-            case 1:
-                cin >> x >> y >> k;
+            case 0:
+                cin >> x >> y;
                 // 因为输入数据从1开始计数，所以查询范围要减1
-                tree.Update(x - 1, y - 1, k);
+                tree.Update(x - 1, y - 1, 1, exclusiveOr);
                 break;
-            case 2:
+            case 1:
                 cin >> x >> y;
                 printf("%lld\n", tree.Find(x - 1, y - 1));
                 break;
+            default:
+                throw "操作错误";
         }
     }
 }
